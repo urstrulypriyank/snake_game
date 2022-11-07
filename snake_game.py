@@ -1,4 +1,5 @@
 import pygame
+import random
 pygame.init()
 
 
@@ -38,26 +39,48 @@ def main():
     set_backgroudColor(WHITE)
     global GAMEWINDOW,BLACK,FPS,EXIT_GAME
     snake_x,snake_y,snake_size = 45,55,10
+    velocity_x = velocity_y = 0
+    foodx = random.randint(0, WINDOW_WIDTH)
+    foody = random.randint(0, WINDOW_HEGIHT)
     clock = pygame.time.Clock()
     
     while not EXIT_GAME:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: EXIT_GAME = True
-            
+           
             # KEY PRESS EVENT
-            if event.type == pygame.KEYDOWN :
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
-                    snake_x = snake_x+10
+                    velocity_x = 10
+                    velocity_y =0
+                   
                 if event.key == pygame.K_LEFT:
-                    snake_x = snake_x-10
-                if event.key == pygame.K_DOWN:
-                    snake_y = snake_y+10
+                    velocity_x = -10
+                    velocity_y = 0
+                if event.key == pygame.K_DOWN :
+                    velocity_y = 10
+                    velocity_x = 0
                 if event.key == pygame.K_UP:
-                    snake_y = snake_y-10
-                pygame.display.update()
+                    print("UP")
+                    velocity_y = -10
+                    velocity_x = 0
+               
                 
+                print(snake_x,snake_y)
+                pygame.display.update()
+        if(snake_x <1):
+            snake_x = WINDOW_WIDTH-5
+        if(snake_x >WINDOW_WIDTH):
+            snake_x = 5
+        if(snake_y <5):
+            snake_y = WINDOW_HEGIHT-5
+        if(snake_y >WINDOW_HEGIHT-5):
+            snake_y = 5
+        snake_x += velocity_x
+        snake_y += velocity_y        
         GAMEWINDOW.fill(WHITE)
         pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_size,snake_size])
+        pygame.draw.rect(GAMEWINDOW, RED, [foodx,foody,snake_size,snake_size])
         pygame.display.update()
         clock.tick(FPS) 
     else:
