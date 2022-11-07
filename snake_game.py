@@ -27,7 +27,15 @@ def set_backgroudColor(color):
 def engine_logic(event):
     pass
    
-    
+def text_screen(text,color,x,y):
+    font = pygame.font.SysFont(None, 55)
+    screen_text = font.render(text,True,color)
+    GAMEWINDOW.blit(screen_text, [x,y])    
+
+def plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size):
+    for x,y in snake_list:
+        pygame.draw.rect(GAMEWINDOW, BLACK, [x,y,snake_size,snake_size])
+   
 
 
 
@@ -41,13 +49,12 @@ def main():
     global GAMEWINDOW,BLACK,FPS,EXIT_GAME
     snake_x,snake_y,snake_size = 45,55,10
     ssize = 10
-    snake_sizex = 10
-    snake_sizey = 10
     velocity_x = velocity_y = 0
     foodx = random.randint(20, WINDOW_WIDTH/2)
     foody = random.randint(20, WINDOW_HEGIHT/2)
     clock = pygame.time.Clock()
-    
+    snake_list = []
+    snake_len = 1
     while not EXIT_GAME:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: EXIT_GAME = True
@@ -57,27 +64,22 @@ def main():
                 if event.key == pygame.K_RIGHT:
                     velocity_x = 10
                     velocity_y =0
-                    snake_sizex = ssize
-                    snake_sizey = 10
 
 
                    
                 if event.key == pygame.K_LEFT:
                     velocity_x = -10
                     velocity_y = 0
-                    snake_sizex = ssize
-                    snake_sizey = 10
+
                 if event.key == pygame.K_DOWN :
                     velocity_y = 10
                     velocity_x = 0
-                    snake_sizey = ssize
-                    snake_sizex = 10
+
                 if event.key == pygame.K_UP:
                     print("UP")
                     velocity_y = -10
                     velocity_x = 0
-                    snake_sizey = ssize
-                    snake_sizex = 10
+                 
                
                 
                 print(snake_x,snake_y)
@@ -93,14 +95,22 @@ def main():
         snake_x += velocity_x
         snake_y += velocity_y  
         if abs(snake_x -foodx)<10 and abs(snake_y-foody)<10:
-            score+=1
+            score+=10
             foodx = random.randint(20, WINDOW_WIDTH/2)
             foody = random.randint(20, WINDOW_HEGIHT/2)
             ssize+=10
-            print("Score",score)      
+            snake_len += 5      
         GAMEWINDOW.fill(WHITE)
-        pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_sizex,snake_sizey])
         pygame.draw.rect(GAMEWINDOW, RED, [foodx,foody,snake_size,snake_size])
+        # pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_sizex,snake_sizey])
+        head = []
+        head.append(snake_x)
+        head.append(snake_y)
+        snake_list.append(head)
+        if len(snake_list) > snake_len:
+            del snake_list[0]
+        plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size)
+        text_screen("Score: "+str(score), RED, 5, 5)
         pygame.display.update()
         clock.tick(FPS) 
     else:
