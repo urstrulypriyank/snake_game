@@ -24,26 +24,8 @@ def set_backgroudColor(color):
     pygame.display.update()
 
 # GAME ENGINE LOGIC IMPLEMENTATION
-def engine_logic(event):
-    pass
-   
-def text_screen(text,color,x,y):
-    font = pygame.font.SysFont(None, 55)
-    screen_text = font.render(text,True,color)
-    GAMEWINDOW.blit(screen_text, [x,y])    
-
-def plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size):
-    for x,y in snake_list:
-        pygame.draw.rect(GAMEWINDOW, BLACK, [x,y,snake_size,snake_size])
-   
-
-
-
-
-def main():
-    # IMPORTING SOME GLOABL VARIABLES
+def engine_logic():
     global EXIT_GAME,WHITE,score
-
     # GAME LOOP
     set_backgroudColor(WHITE)
     global GAMEWINDOW,BLACK,FPS,EXIT_GAME
@@ -58,6 +40,9 @@ def main():
     while not EXIT_GAME:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: EXIT_GAME = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    engine_logic() 
            
             # KEY PRESS EVENT
             if event.type == pygame.KEYDOWN:
@@ -116,11 +101,29 @@ def main():
     else:
         pygame.quit()
         quit() 
+   
+def text_screen(text,color,x,y):
+    font = pygame.font.SysFont(None, 55)
+    screen_text = font.render(text,True,color)
+    GAMEWINDOW.blit(screen_text, [x,y])    
+
+def plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size):
+    for x,y in snake_list:
+        pygame.draw.rect(GAMEWINDOW, BLACK, [x,y,snake_size,snake_size])
+   
 
 
-if __name__ == "__main__":
 
+
+def main():
+    global GAMEWINDOW
     GAMEWINDOW = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEGIHT))
     pygame.display.set_caption(WINDOW_TITLE)
     pygame.display.update()
+    engine_logic()
+
+
+
+
+if __name__ == "__main__":
     main()
