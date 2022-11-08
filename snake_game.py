@@ -25,11 +25,11 @@ def set_backgroudColor(color):
 
 # GAME ENGINE LOGIC IMPLEMENTATION
 def engine_logic():
-    global EXIT_GAME,WHITE,score,GAME_OVER
+    global EXIT_GAME,WHITE,score,GAME_OVER,highScore
     # GAME LOOP
     set_backgroudColor(WHITE)
     global GAMEWINDOW,BLACK,FPS,EXIT_GAME
-    snake_x,snake_y,snake_size = 45,55,10
+    snake_x,snake_y,snake_size = 45,55,30
     ssize = 10
     velocity_x = velocity_y = 0
     foodx = random.randint(20, WINDOW_WIDTH/2)
@@ -37,8 +37,12 @@ def engine_logic():
     clock = pygame.time.Clock()
     snake_list = []
     snake_len = 1
+    with open("HighScore.txt","r") as f:
+        highScore = f.read()
     while not EXIT_GAME:
         if GAME_OVER:
+            with open("HighScore.txt","w") as f:
+                f.write(str(highScore))
             GAMEWINDOW.fill(WHITE)
             text_screen("Game Over ! Press Enter To Continue", RED, WINDOW_WIDTH/4,WINDOW_HEGIHT/2 )
             for event in pygame.event.get():
@@ -95,7 +99,9 @@ def engine_logic():
                 foodx = random.randint(20, WINDOW_WIDTH/2)
                 foody = random.randint(20, WINDOW_HEGIHT/2)
                 ssize+=10
-                snake_len += 5      
+                snake_len += 5  
+                if score>int(highScore):
+                    highScore = score    
             GAMEWINDOW.fill(WHITE)
             pygame.draw.rect(GAMEWINDOW, RED, [foodx,foody,snake_size,snake_size])
             # pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_sizex,snake_sizey])
@@ -108,7 +114,7 @@ def engine_logic():
             if head in snake_list[:-1]:
                 GAME_OVER = True
             plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size)
-            text_screen("Score: "+str(score), RED, 5, 5)
+            text_screen("Score: "+str(score)+"Hight Score :"+str(highScore), RED, 5, 5)
         pygame.display.update()
         clock.tick(FPS) 
     else:
