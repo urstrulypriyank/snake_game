@@ -11,7 +11,7 @@ FPS = 30
 WHITE,BLACK,RED = (255,255,255),(0,0,0),(255,0,0)
 
 # GAME SPECIFIC VARIABLE 
-EXIT_GAME,QUIT_GAME = False,False
+EXIT_GAME,QUIT_GAME,GAME_OVER = False,False,False
 score = 0
 
 
@@ -25,7 +25,7 @@ def set_backgroudColor(color):
 
 # GAME ENGINE LOGIC IMPLEMENTATION
 def engine_logic():
-    global EXIT_GAME,WHITE,score
+    global EXIT_GAME,WHITE,score,GAME_OVER
     # GAME LOOP
     set_backgroudColor(WHITE)
     global GAMEWINDOW,BLACK,FPS,EXIT_GAME
@@ -38,64 +38,77 @@ def engine_logic():
     snake_list = []
     snake_len = 1
     while not EXIT_GAME:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: EXIT_GAME = True
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    engine_logic() 
-           
-            # KEY PRESS EVENT
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    velocity_x = 10
-                    velocity_y =0
+        if GAME_OVER:
+            GAMEWINDOW.fill(WHITE)
+            text_screen("Game Over ! Press Enter To Continue", RED, WINDOW_WIDTH/4,WINDOW_HEGIHT/2 )
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: EXIT_GAME = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        score = 0
+                        GAME_OVER = False
+                        main()
+        else:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: EXIT_GAME = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        engine_logic() 
+            
+                # KEY PRESS EVENT
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        velocity_x = 10
+                        velocity_y =0
 
 
-                   
-                if event.key == pygame.K_LEFT:
-                    velocity_x = -10
-                    velocity_y = 0
+                    
+                    if event.key == pygame.K_LEFT:
+                        velocity_x = -10
+                        velocity_y = 0
 
-                if event.key == pygame.K_DOWN :
-                    velocity_y = 10
-                    velocity_x = 0
+                    if event.key == pygame.K_DOWN :
+                        velocity_y = 10
+                        velocity_x = 0
 
-                if event.key == pygame.K_UP:
-                    print("UP")
-                    velocity_y = -10
-                    velocity_x = 0
-                 
-               
+                    if event.key == pygame.K_UP:
+                        print("UP")
+                        velocity_y = -10
+                        velocity_x = 0
+                    
                 
-                print(snake_x,snake_y)
-                pygame.display.update()
-        if(snake_x <1):
-            snake_x = WINDOW_WIDTH-5
-        if(snake_x >WINDOW_WIDTH):
-            snake_x = 5
-        if(snake_y <5):
-            snake_y = WINDOW_HEGIHT-5
-        if(snake_y >WINDOW_HEGIHT-5):
-            snake_y = 5
-        snake_x += velocity_x
-        snake_y += velocity_y  
-        if abs(snake_x -foodx)<10 and abs(snake_y-foody)<10:
-            score+=10
-            foodx = random.randint(20, WINDOW_WIDTH/2)
-            foody = random.randint(20, WINDOW_HEGIHT/2)
-            ssize+=10
-            snake_len += 5      
-        GAMEWINDOW.fill(WHITE)
-        pygame.draw.rect(GAMEWINDOW, RED, [foodx,foody,snake_size,snake_size])
-        # pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_sizex,snake_sizey])
-        head = []
-        head.append(snake_x)
-        head.append(snake_y)
-        snake_list.append(head)
-        if len(snake_list) > snake_len:
-            del snake_list[0]
-        plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size)
-        text_screen("Score: "+str(score), RED, 5, 5)
+                    
+                    print(snake_x,snake_y)
+                    pygame.display.update()
+            if(snake_x <1):
+                snake_x = WINDOW_WIDTH-5
+            if(snake_x >WINDOW_WIDTH):
+                snake_x = 5
+            if(snake_y <5):
+                snake_y = WINDOW_HEGIHT-5
+            if(snake_y >WINDOW_HEGIHT-5):
+                snake_y = 5
+            snake_x += velocity_x
+            snake_y += velocity_y  
+            if abs(snake_x -foodx)<10 and abs(snake_y-foody)<10:
+                score+=10
+                foodx = random.randint(20, WINDOW_WIDTH/2)
+                foody = random.randint(20, WINDOW_HEGIHT/2)
+                ssize+=10
+                snake_len += 5      
+            GAMEWINDOW.fill(WHITE)
+            pygame.draw.rect(GAMEWINDOW, RED, [foodx,foody,snake_size,snake_size])
+            # pygame.draw.rect(GAMEWINDOW, BLACK, [snake_x,snake_y,snake_sizex,snake_sizey])
+            head = []
+            head.append(snake_x)
+            head.append(snake_y)
+            snake_list.append(head)
+            if len(snake_list) > snake_len:
+                del snake_list[0]
+            if head in snake_list[:-1]:
+                GAME_OVER = True
+            plot_snake(GAMEWINDOW,BLACK,snake_list,snake_size)
+            text_screen("Score: "+str(score), RED, 5, 5)
         pygame.display.update()
         clock.tick(FPS) 
     else:
